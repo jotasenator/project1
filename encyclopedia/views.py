@@ -6,6 +6,8 @@ from django.shortcuts import redirect
 
 from markdown2 import markdown
 
+import re
+
 
 from . import util
 
@@ -31,8 +33,6 @@ def new(request):
     else:
         return render(request, "encyclopedia/new.html")
 
-
-
 def entry(request, entry):
     filename = f"entries/{entry}.md"
     if os.path.exists(filename):
@@ -42,4 +42,11 @@ def entry(request, entry):
         return render(request, "encyclopedia/entry.html", {"content": html})
     else:
         return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
+
+def search(request):
+    query = request.GET.get("q")
+    entries = os.listdir("entries")
+    entries = [entry.replace(".md", "") for entry in entries]
+    results = [entry for entry in entries if re.search(query, entry, re.IGNORECASE)]
+    return render(request, "encyclopedia/search.html", {"results": results})
 
