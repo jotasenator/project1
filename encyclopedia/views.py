@@ -1,5 +1,11 @@
 from django.shortcuts import render
+
+import os
+import random as rnd
+from django.shortcuts import redirect
+
 from markdown2 import markdown
+
 
 from . import util
 
@@ -8,11 +14,15 @@ def index(request):
     return render(request, "encyclopedia/index.html", {
         "entries": util.list_entries()
     })
+
 def new(request):
     return render(request, "encyclopedia/new.html")
-    
+
 def random(request):
-    return render(request, "encyclopedia/random.html")
+    entries = os.listdir("entries")
+    entries = [entry.replace(".md", "") for entry in entries]
+    entry = rnd.choice(entries)
+    return redirect("entry", entry=entry)
 
 
 
