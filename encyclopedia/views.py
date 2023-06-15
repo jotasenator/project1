@@ -15,14 +15,21 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def new(request):
-    return render(request, "encyclopedia/new.html")
-
 def random(request):
     entries = os.listdir("entries")
     entries = [entry.replace(".md", "") for entry in entries]
     entry = rnd.choice(entries)
     return redirect("entry", entry=entry)
+
+def new(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        content = request.POST["content"]
+        with open(f"entries/{title}.md", "w") as f:
+            f.write(content)
+        return redirect("entry", entry=title)
+    else:
+        return render(request, "encyclopedia/new.html")
 
 
 
