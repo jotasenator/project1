@@ -34,8 +34,12 @@ def new(request):
 
 
 def entry(request, entry):
-    with open(f"entries/{entry}.md") as f:
-        content = f.read()
-    html = markdown(content)
-    return render(request, "encyclopedia/entry.html", {"content": html})
+    filename = f"entries/{entry}.md"
+    if os.path.exists(filename):
+        with open(filename) as f:
+            content = f.read()
+        html = markdown(content)
+        return render(request, "encyclopedia/entry.html", {"content": html})
+    else:
+        return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
 
