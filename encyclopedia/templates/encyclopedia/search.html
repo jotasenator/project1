@@ -6,9 +6,11 @@
 
 {% block body %}
   <h1>Search Results</h1>
-  <ul>
+  <ul style="list-style: none;">
     {% for result in results %}
-      <li><a href="{% url 'entry' result %}">{{ result }}</a></li>
+      <li>        
+        {{ result.1|safe }}
+    </li>
     {% empty %}
       <li>No results found.</li>
     {% endfor %}

@@ -8,6 +8,8 @@ from markdown2 import markdown
 
 import re
 
+from django.utils.safestring import mark_safe
+
 
 from . import util
 
@@ -45,8 +47,18 @@ def entry(request, entry):
 
 def search(request):
     query = request.GET.get("q")
+    if not query:
+        return render(request, "encyclopedia/error.html", {"message": "No search query entered."})
     entries = os.listdir("entries")
     entries = [entry.replace(".md", "") for entry in entries]
-    results = [entry for entry in entries if re.search(query, entry, re.IGNORECASE)]
+    results = []
+    for entry in entries:
+        if re.search(query, entry, re.IGNORECASE):
+            with open(f"entries/{entry}.md") as f:
+                content = f.read()
+            html = markdown(content)
+            results.append((entry, html))
+    if not results:
+        return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( f"No results found for '<b>{query}</b>'. Please elaborate.")})
     return render(request, "encyclopedia/search.html", {"results": results})
 
