@@ -51,6 +51,12 @@ def search(request):
         return render(request, "encyclopedia/error.html", {"message": "No search query entered."})
     entries = os.listdir("entries")
     entries = [entry.replace(".md", "") for entry in entries]
+    
+    # Check if query matches the name of an entry exactly
+    if query in entries:
+        return redirect("entry", entry=query)
+    
+    # Search for entries that have the query as a substring
     results = []
     for entry in entries:
         if re.search(query, entry, re.IGNORECASE):
@@ -59,6 +65,7 @@ def search(request):
             html = markdown(content)
             results.append((entry, html))
     if not results:
-        return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( f"No results found for '<b>{query}</b>'. Please elaborate.")})
+        return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( f"No results found for '<b>{query}</b>'. Please elaborate")})
     return render(request, "encyclopedia/search.html", {"results": results})
+
 
