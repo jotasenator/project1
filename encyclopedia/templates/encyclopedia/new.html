@@ -6,6 +6,11 @@
 
 {% block body %}
   <h1>Create New Page</h1>
+
+  {% if error %}
+    <div id="error" class="alert alert-danger" style="margin-right: 20px;">{{ error }}</div>
+  {% endif %}
+
   <form method="post">
     {% csrf_token %}
     <div class="form-group " style="margin-right: 20px;">
@@ -18,4 +23,13 @@
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
   </form>
+
+  {% if error %}
+    <script>
+      setTimeout(function() {
+        document.getElementById("error").style.display = "none";
+      }, 2500); 
+    </script>
+  {% endif %}
+
 {% endblock %}

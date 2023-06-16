@@ -26,14 +26,22 @@ def random(request):
     return redirect("entry", entry=entry)
 
 def new(request):
+
+    error=None
     if request.method == "POST":
         title = request.POST["title"]
         content = request.POST["content"]
-        with open(f"entries/{title}.md", "w") as f:
-            f.write(content)
-        return redirect("entry", entry=title)
-    else:
-        return render(request, "encyclopedia/new.html")
+
+        # Check entry with the same title already exists
+        filename = f"entries/{title}.md"
+        if os.path.exists(filename):
+            # return render(request, "encyclopedia/error.html", {"message": f"An entry with the title '{title}' already exists."})
+            error = f"An entry with the title '{title}' already exists."
+        else:
+            with open(filename, "w") as f:
+                f.write(content)
+            return redirect("entry", entry=title)   
+    return render(request, "encyclopedia/new.html",{"error":error})
 
 def entry(request, entry):
     filename = f"entries/{entry}.md"
@@ -83,5 +91,11 @@ def edit(request, entry):
         else:
             return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
 
-
+def delete(request, entry):
+    filename = f"entries/{entry}.md"
+    if os.path.exists(filename):
+        os.remove(filename)
+        return HttpResponseRedirect(reverse('index'))
+    else:
+        return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
 
