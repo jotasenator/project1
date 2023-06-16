@@ -6,9 +6,17 @@
 
 {{ content|safe }} 
 
-<form action="{% url 'edit' entry=entry %}" method="get">
-  <button type="submit" class="btn btn-primary">Edit this page</button>
-</form>
+<div class="form-container" style="display:flex; gap:10px">
+
+  <form action="{% url 'edit' entry=entry %}" method="get">
+    <button type="submit" class="btn btn-primary">Edit this page</button>
+  </form>
+
+  <form action="{% url 'delete' entry=entry %}" method="post">
+  {% csrf_token %} <!--each time there is a method='post'-->
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this page?')">Delete this page</button>
+  </form>
+</div>
 
 
 {% endblock %}

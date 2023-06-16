@@ -14,4 +14,6 @@ urlpatterns = [
     path("search",views.search,name="search"),
 
     path("edit/<str:entry>", views.edit, name="edit"),
+
+    path('delete/<str:entry>/', views.delete, name='delete'),
 ]
