@@ -29,7 +29,6 @@ def random(request):
     return redirect("entry", entry=entry)
 
 def new(request):
-
     error=None
     if request.method == "POST":
         title = request.POST["title"]
@@ -54,12 +53,14 @@ def entry(request, entry):
         html = markdown(content)
         return render(request, "encyclopedia/entry.html", {"entry":entry,"content": html})
     else:
-        return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
+        message = f"Create content about '<b>{entry}</b>'"
+        return render(request, "encyclopedia/elaborate.html", {"message":mark_safe( message)})
 
 def search(request):
     query = request.GET.get("q")
     if not query:
-        return render(request, "encyclopedia/error.html", {"message": "No search query entered."})
+        message="No search query entered."
+        return render(request, "encyclopedia/error.html", {"message":message })
     entries = os.listdir("entries")
     entries = [entry.replace(".md", "") for entry in entries]
     
@@ -76,7 +77,8 @@ def search(request):
             html = markdown(content)
             results.append((entry, html))
     if not results:
-        return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( f"No results found for '<b>{query}</b>'. Please elaborate")})
+        message = f"No results found for '<b>{query}</b>'. Please elaborate"
+        return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( message)})
     return render(request, "encyclopedia/search.html", {"results": results})
 
 def edit(request, entry):
@@ -92,7 +94,8 @@ def edit(request, entry):
                 content = f.read()
             return render(request, "encyclopedia/edit.html", {"entry": entry, "content": content})
         else:
-            return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
+            message=f"Sorry, the requested page '{entry}' was not found."
+            return render(request, "encyclopedia/error.html", {"message": message})
 
 def delete(request, entry):
     filename = f"entries/{entry}.md"
@@ -100,5 +103,6 @@ def delete(request, entry):
         os.remove(filename)
         return HttpResponseRedirect(reverse('index'))
     else:
-        return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
+        message = f"Sorry, the requested page '{entry}' was not found."
+        return render(request, "encyclopedia/error.html", {"message": message})
 
