@@ -41,7 +41,7 @@ def entry(request, entry):
         with open(filename) as f:
             content = f.read()
         html = markdown(content)
-        return render(request, "encyclopedia/entry.html", {"content": html})
+        return render(request, "encyclopedia/entry.html", {"entry":entry,"content": html})
     else:
         return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
 
@@ -67,5 +67,21 @@ def search(request):
     if not results:
         return render(request, "encyclopedia/elaborate.html", {"message": mark_safe( f"No results found for '<b>{query}</b>'. Please elaborate")})
     return render(request, "encyclopedia/search.html", {"results": results})
+
+def edit(request, entry):
+    filename = f"entries/{entry}.md"
+    if request.method == "POST":
+        content = request.POST["content"]
+        with open(filename, "w") as f:
+            f.write(content)
+        return redirect("entry", entry=entry)
+    else:
+        if os.path.exists(filename):
+            with open(filename) as f:
+                content = f.read()
+            return render(request, "encyclopedia/edit.html", {"entry": entry, "content": content})
+        else:
+            return render(request, "encyclopedia/error.html", {"message": f"Sorry, the requested page '{entry}' was not found."})
+
 
 

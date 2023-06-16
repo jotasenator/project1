@@ -2,4 +2,15 @@
 
 {% block title %} {{ entry }} {%endblock %} 
 
-{% block body %} {{ content|safe }} {% endblock %}
+{% block body %} 
+
+{{ content|safe }} 
+
+<form action="{% url 'edit' entry=entry %}" method="get">
+  <button type="submit" class="btn btn-primary">Edit this page</button>
+</form>
+
+
+{% endblock %}
+
+
